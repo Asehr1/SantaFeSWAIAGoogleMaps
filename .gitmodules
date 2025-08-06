@@ -1,0 +1,6 @@
+[submodule "com/example/santefeswaia/AndroidUtilCode"]
+	path = com/example/santefeswaia/AndroidUtilCode
+	url = https://github.com/Blankj/AndroidUtilCode.git
+[submodule "com/example/santefeswaia/com/example/santafeswaia/AndroidUtilCode"]
+	path = com/example/santefeswaia/com/example/santafeswaia/AndroidUtilCode
+	url = https://github.com/Blankj/AndroidUtilCode.git
