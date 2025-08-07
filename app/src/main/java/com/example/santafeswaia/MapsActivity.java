@@ -5,20 +5,18 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.Manifest.permission;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.santafeswaia.databinding.ActivityMapsBinding;
+
+import androidx.core.app.ActivityCompat;
 
 public class MapsActivity extends FragmentActivity
         implements
@@ -27,18 +25,18 @@ public class MapsActivity extends FragmentActivity
         GoogleMap.OnMyLocationClickListener {
 
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        // Warning says this may produce a null pointer exception.
         mapFragment.getMapAsync(this);
     }
 
@@ -81,8 +79,7 @@ public class MapsActivity extends FragmentActivity
         }
 
         // 2. Otherwise, request location permissions from the user.
-        PermissionUtils.requestLocationPermissions(this, LOCATION_PERMISSION_REQUEST_CODE, true);
-
+        requestLocationPermission();
     }
 
     @Override
@@ -98,5 +95,34 @@ public class MapsActivity extends FragmentActivity
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 
+    private void requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted, request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            // Permission already granted, proceed with location-related tasks
+            Toast.makeText(this, "Location permission already granted", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted by the user
+                Toast.makeText(this, "Location permission granted", Toast.LENGTH_SHORT).show();
+                // Call your method to get location here
+                // getLocation();
+            } else {
+                // Permission denied by the user
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }

@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Santa Fe SWAIA"
 include(":app")
- 
